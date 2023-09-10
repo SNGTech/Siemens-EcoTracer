@@ -1,0 +1,27 @@
+{
+  "name": "sim_webserver",
+  "version": "1.0.0",
+  "description": "Simulator for EcoTracer",
+  "main": "app.js",
+  "scripts": {
+    "test": "console.log(\"test\");",
+    "dev": "tsc -w | nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.17",
+    "@types/express-ejs-layouts": "^2.5.1",
+    "@types/node": "^20.5.9",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-ejs-layouts": "^2.5.1",
+    "mongoose": "^7.5.0",
+    "tsx": "^3.12.8",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

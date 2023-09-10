@@ -1,0 +1,15 @@
+{
+  "name": "ecotracer_webserver",
+  "version": "1.0.0",
+  "description": "Webserver for EcoTracer App",
+  "main": "publisher.js",
+  "scripts": {
+    "test": "console.log(\"Test\")"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^7.5.0",
+    "mqtt": "^5.0.4"
+  }
+}
