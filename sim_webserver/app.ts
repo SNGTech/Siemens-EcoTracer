@@ -50,7 +50,7 @@ var batch_count = false;
 var current;
 var voltage;
 var volumes_flow_rate = [];
-var valves_status = []; // false - close, true - open
+var valves_status = []; // false - close, true - open (meant to increment bottle usage)
 var energy_rate;
 var current_batch = 0;
 var item_completed_flag = false;
@@ -262,8 +262,8 @@ async function handleBatchEvent() {
         if(is_item_done) {
             item_completed_flag = true;
             current_batch++;
-            console.log("Item completed");
-        } else console.log("Item not done");
+            //console.log("Item completed");
+        } //else console.log("Item not done");
 
         if(current_batch >= batch_count_json) {
             resetBatch();
