@@ -11,7 +11,7 @@ const DrinkRecipeSchema = new Schema({
             ingredient_name: String,
             amount: Number
         }],
-        default: undefined
+        default: {}
     }
 }, {
     collection: "drink_recipes"

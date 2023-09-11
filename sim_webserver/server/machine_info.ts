@@ -11,11 +11,23 @@ const MachineInfoDataSchema = new Schema({
         type: Number,
         required: true
     },
-    milk_volume: {
+    max_tea_volume: {
         type: Number,
         required: true
     },
     tea_volume: {
+        type: Number,
+        required: true
+    },
+    max_milk_volume: {
+        type: Number,
+        required: true
+    },
+    milk_volume: {
+        type: Number,
+        required: true
+    },
+    max_bottle_count: {
         type: Number,
         required: true
     },

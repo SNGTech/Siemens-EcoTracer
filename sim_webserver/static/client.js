@@ -1,5 +1,5 @@
 const btn_power = document.getElementById('btn_machine_power');
-const btn_water_valves = document.getElementById('btn_water_valves');
+const btn_valves = document.getElementById('btn_valves');
 const btn_add_item = document.getElementById('btn_add_item');
 const btn_remove_item = document.getElementById('btn_remove_item');
 const btn_batching = document.getElementById('btn_batching');
@@ -37,13 +37,13 @@ addBtnClickListener(btn_power, '/power_toggle', () => {
         btn_power.innerHTML = 'Power ON Machine';
 }, machine_power_payload);
 let water_valves_payload = { is_valves_opened: false };
-addBtnClickListener(btn_water_valves, '/water_valves', () => {
+addBtnClickListener(btn_valves, '/fluid_valves', () => {
     water_valves_payload.is_valves_opened = !water_valves_payload.is_valves_opened;
 }, () => {
     if (water_valves_payload.is_valves_opened)
-        btn_water_valves.innerHTML = 'Close Water Valves';
+        btn_valves.innerHTML = 'Close Fluid Valves';
     else
-        btn_water_valves.innerHTML = 'Open Water Valves';
+        btn_valves.innerHTML = 'Open Fluid Valves';
 }, water_valves_payload);
 function updateData() {
     fetch('/pub_data', { method: 'GET' }).then((response) => {
@@ -58,8 +58,15 @@ function updateData() {
         document.getElementById('machine_status').innerHTML = `Machine Status: ${data.is_on ? "ON" : "OFF"}`;
         document.getElementById('current').innerHTML = `Current: ${data.current} A`;
         document.getElementById('voltage').innerHTML = `Voltage: ${data.voltage} V`;
-        document.getElementById('water_flow_rate').innerHTML = `Water Flow Rate: ${data.water_flow_rate} litres/min`;
+        let flow_rates = document.getElementById('flow_rates');
+        flow_rates.innerHTML = "";
+        data.flow_rates.forEach(e => {
+            var li = document.createElement('li');
+            li.innerHTML = `${e.name} Flow Rate: ${e.flow_rate} litres/min`;
+            flow_rates.appendChild(li);
+        });
         document.getElementById('energy_rate').innerHTML = `Energy Rate: ${data.energy_rate} kWh`;
+        progress_text.innerHTML = `Batch: ${data.current_batch_count}/${data.batch_count} Items Completed`;
     })
         .catch((error) => console.log(error));
 }

@@ -110,11 +110,13 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
                     child: Column(children: [
                       InfoProgressBar(
                           title: "Milk",
-                          progress: 0.25,
+                          progress: MonitorInfoModel().getMilkVolumePercentage(
+                              infoData: machineInfoData!)!,
                           fillColour: Colors.white),
                       InfoProgressBar(
                           title: "Tea",
-                          progress: 0.48,
+                          progress: MonitorInfoModel().getTeaVolumePercentage(
+                              infoData: machineInfoData!)!,
                           fillColour: AppColor.darkTeal),
                       InfoProgressBar(
                           title: "Water",
@@ -123,7 +125,8 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
                           fillColour: AppColor.statsBlue),
                       InfoProgressBar(
                           title: "Bottle",
-                          progress: 0.08,
+                          progress: MonitorInfoModel().getBottleCountPercentage(
+                              infoData: machineInfoData!)!,
                           fillColour: AppColor.statsPurple),
                     ])),
                 Container(

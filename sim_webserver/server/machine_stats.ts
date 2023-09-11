@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 const MachineStatsSchema = new Schema({
+    timestamp: {
+        type: Date,
+        default: Date.now()
+    },
     is_on: {
         type: Boolean,
         required: true
@@ -14,15 +18,22 @@ const MachineStatsSchema = new Schema({
         type: Number,
         required: true
     },
-    water_flow_rate: {
-        type: Number,
-        required: true
+    flow_rates: {
+        type: [{
+            name: String,
+            flow_rate: Number
+        }],
+        default: {}
     },
     energy_rate: {
         type: Number,
         required: true
     },
     batch_count: {
+        type: Number,
+        required: true
+    },
+    current_batch_count: {
         type: Number,
         required: true
     },

@@ -5,19 +5,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const Schema = mongoose_1.default.Schema;
-const DrinkRecipeSchema = new Schema({
-    name: {
+const BatchDataSchema = new Schema({
+    drink_name: {
         type: String,
         required: true
     },
-    ingredients: {
+    current_num: {
+        type: Number,
+        required: true
+    },
+    max_num: {
+        type: Number,
+        required: true
+    },
+    consumption: {
         type: [{
                 ingredient_name: String,
-                amount: Number
+                amount_used: Number,
+                rate: Number
             }],
         default: {}
     }
 }, {
-    collection: "drink_recipes"
+    collection: "batch_data"
 });
-module.exports = mongoose_1.default.model('DrinkRecipes', DrinkRecipeSchema);
+module.exports = mongoose_1.default.model('BatchData', BatchDataSchema);
