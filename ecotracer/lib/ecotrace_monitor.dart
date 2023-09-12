@@ -133,7 +133,7 @@ class _TopOptionsBarState extends State<TopOptionsBar> {
                       height: topBarHeight,
                       child: Container(
                         decoration: const BoxDecoration(
-                            color: Color(0xFF178772),
+                            color: AppColor.btnBg,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(15))),
                       )),

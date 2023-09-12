@@ -122,8 +122,7 @@ class ButtonWidget extends StatelessWidget {
         onTap: () => debugPrint("User pressed ${label} button"),
         child: Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: AppColor.darkTeal),
+                borderRadius: BorderRadius.circular(20), color: AppColor.btnBg),
             alignment: Alignment.center,
             child: Text(
               label!,

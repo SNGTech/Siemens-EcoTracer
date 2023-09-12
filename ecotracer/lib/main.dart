@@ -1,3 +1,4 @@
+import "package:ecotracer/ecotrace_co2_tracker.dart";
 import "package:ecotracer/ecotrace_home.dart";
 import 'package:ecotracer/ecotrace_monitor.dart';
 import "package:ecotracer/ecotrace_options.dart";
@@ -22,7 +23,7 @@ final router =
           routes: [
             GoRoute(
                 path: "co2tracker",
-                builder: (context, state) => EcoTracerHomePage()),
+                builder: (context, state) => EcoTracerCO2TrackerPage()),
             GoRoute(
                 path: "setup",
                 builder: (context, state) => EcoTracerSetupPage()),
