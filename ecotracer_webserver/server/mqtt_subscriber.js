@@ -1,27 +1,32 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getData = exports.connectAndSubscribe = void 0;
 const mqtt = require('mqtt');
-module.exports = function () {
-    const host = '192.168.1.101';
-    const port = 1883;
-    const topics = ['liquidFlowRate', 'liquidTotalVolume', 'airFlowRate', 'supplyVoltage', 'currentRMS', 'flowTotalVolume'];
-    const options = {
-        clientId: 'ESP32Client',
-        Username: '',
-        Password: '',
-        clean: true,
-        connectTimeout: 4000,
-        reconnectPeriod: 1000
-    };
-    console.log("Node.js is now running");
-    const client = mqtt.connect(`mqtt://${host}:${port}`, options);
+var client;
+var data;
+const host = '192.168.1.101';
+const port = 1883;
+const topic = 'ecotracer/data';
+const options = {
+    clean: true,
+    username: '',
+    password: '',
+    connectTimeout: 4000,
+    reconnectPeriod: 1000
+};
+function connectAndSubscribe() {
+    client = mqtt.connect(`mqtt://${host}:${port}`, options);
     client.on('connect', () => {
         console.log(`Connection established successfully at: mqtt://${host}:${port}`);
-        // topics.forEach(topic => {
-        //     client.subscribe(topic);
-        //     console.log(`Subscribed to topic: ${topic}`);
-        // })
-        client.subscribe('liquidFlowRate', 0);
+        client.subscribe(topic, () => console.log(`Subscribed to topic: ${topic}`));
     });
-    client.on('message', function (topic, message) {
-        console.log(`Listening to topic [${topic}]: Message is ${message}`);
+    client.on('message', (topic, message) => {
+        data = message;
     });
-};
+}
+exports.connectAndSubscribe = connectAndSubscribe;
+function getData() {
+    return data != null ? JSON.stringify(JSON.parse(data), null, 2) : "No Data";
+}
+exports.getData = getData;
+;

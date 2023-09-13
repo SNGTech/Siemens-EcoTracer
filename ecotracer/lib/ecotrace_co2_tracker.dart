@@ -1,3 +1,4 @@
+import "package:ecotracer/charts/co2_consumption/co2_chart.dart";
 import "package:ecotracer/constants/colours.dart";
 import "package:ecotracer/models/processes.dart";
 import "package:ecotracer/process_component.dart";
@@ -150,7 +151,7 @@ class _EcoTracerCO2WidgetState extends State<EcoTracerCO2Widget> {
                 ))),
 
         Container(
-            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
+            padding: const EdgeInsets.only(top: 25, bottom: 30, left: 25, right: 25),
             alignment: Alignment.centerLeft,
             child: const Text(
               "Carbon Consumption",
@@ -159,6 +160,11 @@ class _EcoTracerCO2WidgetState extends State<EcoTracerCO2Widget> {
                   color: AppColor.brown,
                   fontSize: 20),
             )),
+          Container(
+            height: 300,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.only(bottom: 25, left: 5, right: 30),
+            child: CO2LineChart()),
       ],
     );
   }

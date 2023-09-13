@@ -1,3 +1,10 @@
-const mqtt_subscribe = require('./server/mqtt_subscriber');
+import { connectAndSubscribe } from "./server/mqtt_subscriber";
+import { getData } from "./server/mqtt_subscriber";
+import { connectMongoDB } from "./server/mongodb";
 
-mqtt_subscribe();
+connectAndSubscribe();
+connectMongoDB();
+
+// ENABLE DEBUGGING DISPLAY DATA
+setInterval(() => console.log(`Received data: ${getData()}`), 1000);
+
