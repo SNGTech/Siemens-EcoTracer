@@ -6,10 +6,6 @@ const MachineStatsSchema = new Schema({
         type: Date,
         default: Date.now()
     },
-    is_on: {
-        type: Boolean,
-        required: true
-    },
     current: {
         type: Number,
         required: true
@@ -18,31 +14,16 @@ const MachineStatsSchema = new Schema({
         type: Number,
         required: true
     },
-    flow_rates: {
-        type: [{
-            name: String,
-            flow_rate: Number
-        }],
-        default: {}
-    },
     energy_rate: {
-        type: Number,
-        required: true
-    },
-    co2_rate: {
-        type: Number,
-        required: true
-    },
-    co2_target: {
-        type: Number,
-        required: true
-    },
-    batch_count: {
         type: Number,
         required: true
     },
     has_batch_started: {
         type: Boolean,
+        required: true
+    },
+    status: {
+        type: String,
         required: true
     }
 }, {

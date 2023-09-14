@@ -4,7 +4,7 @@ exports.getData = exports.connectAndSubscribe = void 0;
 const mqtt = require('mqtt');
 var client;
 var data;
-const host = '192.168.1.101';
+const host = '192.168.213.38';
 const port = 1883;
 const topic = 'ecotracer/data';
 const options = {
@@ -26,7 +26,7 @@ function connectAndSubscribe() {
 }
 exports.connectAndSubscribe = connectAndSubscribe;
 function getData() {
-    return data != null ? JSON.stringify(JSON.parse(data), null, 2) : "No Data";
+    return data != null ? JSON.parse(data) : "No Data";
 }
 exports.getData = getData;
 ;
