@@ -28,6 +28,7 @@ const PORT = 5000;
 app.use(express_1.default.json());
 app.listen(PORT, () => {
     console.log(`Express App listening on Port: ${PORT}`);
+    (0, resource_model_1.initBottleCount)();
 });
 (0, mqtt_subscriber_1.connectAndSubscribe)();
 (0, mongodb_1.connectMongoDB)();
@@ -72,10 +73,10 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, batching_model_1.updateBatchData)((0, resource_model_1.getIngredientNames)(), yield (0, flow_rate_model_1.getFlowRate)(), has_batch_started);
         console.log(yield (0, batching_model_1.getLatestBatchData)());
     }
-    yield (0, resource_model_1.updateResources)(yield (0, flow_rate_model_1.getFlowRate)(), false);
+    yield (0, resource_model_1.updateResources)(yield (0, flow_rate_model_1.getFlowRate)());
     if ((0, mqtt_subscriber_2.getData)() != "No Data")
         (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)(), has_batch_started); // ENABLE WHEN DATA IS COLLECTING
-    (0, carbon_model_1.updateCarbonData)(yield (0, stats_model_1.getMachineStatsData)());
+    //updateCarbonData(await getMachineStatsData());
     //console.log(data);
 }), 1000);
 // DEBUG START BATCH

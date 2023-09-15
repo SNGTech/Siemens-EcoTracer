@@ -1,4 +1,8 @@
+import { decrementBottleCount } from "./resource_model";
+
 const BatchData = require('../schemas/batch_data');
+
+var is_finished_item = false;
 
 const batchStatus = {
     ONGOING: 0,
@@ -6,7 +10,7 @@ const batchStatus = {
 }
 
 async function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started) {
-    let is_finished_item = true;
+    is_finished_item = true;
     let drink_name;
     let current_item_count;
     let max_item_count;
@@ -49,6 +53,7 @@ async function updateBatchData(ingredient_names, flow_rates_payload, has_batch_s
             }
             // TODO: ENSURE IT ONLY ACTIVATES ONCE AFTER EVERY ITEM COMPLETION
             if(is_finished_item) {
+                decrementBottleCount()
                 current_item_count++;
                 consumption = [];
                 for(let i = 0; i < ingredient_names.length; i++) {
@@ -98,4 +103,8 @@ async function getLatestBatchData() {
     }
 }
 
-export { getLatestBatchData, updateBatchData };
+function getHasItemFinished() {
+    return is_finished_item;
+}
+
+export { getLatestBatchData, updateBatchData, getHasItemFinished };

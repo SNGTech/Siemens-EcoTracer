@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getIngredientNames = exports.getResourcesData = exports.updateResources = exports.resetModel = void 0;
+exports.initBottleCount = exports.decrementBottleCount = exports.getIngredientNames = exports.getResourcesData = exports.updateResources = exports.resetModel = void 0;
 const MachineResouces = require('../schemas/machine_resources');
 // IN FUTURE TO STORE AND QUERY IN A DEDICATED COLLECTION
 var ingredient_names = ['Water', 'Tea', 'Milk'];
-var max_volumes = [1, 1, 0.4];
+var max_volumes = [3, 3, 3.4];
 var max_bottle_count = 40;
+var bottle_count = 0;
 function resetModel() {
     let resources_arr = ingredient_names.map((name, i) => {
         return {
@@ -32,13 +33,12 @@ function resetModel() {
     ]);
 }
 exports.resetModel = resetModel;
-function updateResources(flow_rates_payload, has_finished_item) {
+function updateResources(flow_rates_payload) {
     return __awaiter(this, void 0, void 0, function* () {
         let new_ingredient_names = [];
         let new_max_volumes = [];
         let new_current_volumes = [];
         let new_max_bottle_count = 0;
-        let new_bottle_count = 0;
         try {
             let resourcesData = yield MachineResouces.find();
             ingredient_names.forEach((name, i) => __awaiter(this, void 0, void 0, function* () {
@@ -50,10 +50,6 @@ function updateResources(flow_rates_payload, has_finished_item) {
                 new_current_volumes.push(prev_current_volume - (flow_rates_payload["flow_rates"][i]["flow_rate"] / 60));
             }));
             new_max_bottle_count = max_bottle_count;
-            let prev_bottle_count = resourcesData.length > 1
-                ?
-                    resourcesData[resourcesData.length - 1]["bottle_count"] : max_bottle_count;
-            new_bottle_count = has_finished_item ? prev_bottle_count - 1 : prev_bottle_count;
             let resources_arr = new_ingredient_names.map((name, i) => {
                 return {
                     ingredient_name: name,
@@ -64,7 +60,7 @@ function updateResources(flow_rates_payload, has_finished_item) {
             let data = {
                 volume_data: resources_arr,
                 max_bottle_count: new_max_bottle_count,
-                bottle_count: new_bottle_count
+                bottle_count: bottle_count
             };
             MachineResouces.insertMany([data]);
             return data;
@@ -93,3 +89,15 @@ function getIngredientNames() {
     return ingredient_names;
 }
 exports.getIngredientNames = getIngredientNames;
+function decrementBottleCount() {
+    bottle_count--;
+}
+exports.decrementBottleCount = decrementBottleCount;
+function initBottleCount() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let resourcesData = yield MachineResouces.find();
+        bottle_count = resourcesData.length > 1 ?
+            resourcesData[resourcesData.length - 1]["bottle_count"] : max_bottle_count;
+    });
+}
+exports.initBottleCount = initBottleCount;

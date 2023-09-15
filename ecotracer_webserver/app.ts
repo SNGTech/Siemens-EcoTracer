@@ -4,7 +4,7 @@ import { connectMongoDB } from "./server/mongodb";
 import { getMachineStatsData, updateMachineStats } from "./server/models/stats_model";
 import { add_test_recipes, getRecipes } from "./server/models/recipe_model";
 import express from 'express';
-import { resetModel, updateResources, getResourcesData, getIngredientNames } from "./server/models/resource_model";
+import { resetModel, updateResources, getResourcesData, getIngredientNames, initBottleCount } from "./server/models/resource_model";
 import { resetFlowRate, getFlowRate, updateFlowRates } from "./server/models/flow_rate_model";
 import { getLatestBatchData, updateBatchData } from "./server/models/batching_model";
 import { getCarbonDataHourly, updateCarbonData } from "./server/models/carbon_model";
@@ -16,6 +16,7 @@ app.use(express.json());
 
 app.listen(PORT, () => {
     console.log(`Express App listening on Port: ${PORT}`);
+    initBottleCount();
 })
 
 connectAndSubscribe();
@@ -73,10 +74,10 @@ setInterval(async() => {
         await updateBatchData(getIngredientNames(), await getFlowRate(), has_batch_started);
         console.log(await getLatestBatchData());
     }
-    await updateResources(await getFlowRate(), false);
+    await updateResources(await getFlowRate());
     if(getData() != "No Data")
         updateMachineStats(getData(), has_batch_started); // ENABLE WHEN DATA IS COLLECTING
-    updateCarbonData(await getMachineStatsData());
+    //updateCarbonData(await getMachineStatsData());
     //console.log(data);
 }, 1000);
 

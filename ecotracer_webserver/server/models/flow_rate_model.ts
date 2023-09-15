@@ -2,7 +2,7 @@ const FlowRates = require('../schemas/flow_rates');
 const DrinkRecipes = require('../schemas/drink_recipe');
 
 // WATER (INDEX 0) is taken from machine
-var def_flow_rates = [0.2, 0.4, 0.6];
+var def_flow_rates = [1.2, 1.4, 1.6];
 
 // RESET FLOW RATES
 function resetFlowRate(ingredient_names) {
@@ -61,9 +61,10 @@ async function updateFlowRates(data_payload, ingredient_names, batch_payload) {
                 flow_rates.push(0);
             } else {
                 // Use water flow rate data from machine, the rest is simulated
-                // if(i == 0)
-                //     flow_rates.push(data_payload["liquidFlowRate"]);
-                //else
+            //     if(i == 0) {
+            //         flow_rates.push(data_payload["liquidFlowRate"]);
+            //         console.log(`Liquid: ${data_payload["liquidFlowRate"]}`);
+            // } else
                     flow_rates.push(def_flow_rates[i]);
             }
 

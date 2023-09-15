@@ -9,15 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBatchData = exports.getLatestBatchData = void 0;
+exports.getHasItemFinished = exports.updateBatchData = exports.getLatestBatchData = void 0;
+const resource_model_1 = require("./resource_model");
 const BatchData = require('../schemas/batch_data');
+var is_finished_item = false;
 const batchStatus = {
     ONGOING: 0,
     COMPLETED: 1
 };
 function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started) {
     return __awaiter(this, void 0, void 0, function* () {
-        let is_finished_item = true;
+        is_finished_item = true;
         let drink_name;
         let current_item_count;
         let max_item_count;
@@ -53,6 +55,7 @@ function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started
                 }
                 // TODO: ENSURE IT ONLY ACTIVATES ONCE AFTER EVERY ITEM COMPLETION
                 if (is_finished_item) {
+                    (0, resource_model_1.decrementBottleCount)();
                     current_item_count++;
                     consumption = [];
                     for (let i = 0; i < ingredient_names.length; i++) {
@@ -100,3 +103,7 @@ function getLatestBatchData() {
     });
 }
 exports.getLatestBatchData = getLatestBatchData;
+function getHasItemFinished() {
+    return is_finished_item;
+}
+exports.getHasItemFinished = getHasItemFinished;
