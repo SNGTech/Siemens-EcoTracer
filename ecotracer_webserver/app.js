@@ -19,6 +19,10 @@ const stats_model_1 = require("./server/models/stats_model");
 const recipe_model_1 = require("./server/models/recipe_model");
 const express_1 = __importDefault(require("express"));
 const resource_model_1 = require("./server/models/resource_model");
+const flow_rate_model_1 = require("./server/models/flow_rate_model");
+const batching_model_1 = require("./server/models/batching_model");
+const carbon_model_1 = require("./server/models/carbon_model");
+const BatchData = require('./server/schemas/batch_data');
 const app = (0, express_1.default)();
 const PORT = 5000;
 app.use(express_1.default.json());
@@ -30,6 +34,7 @@ app.listen(PORT, () => {
 // INITIAL PHASE
 (0, recipe_model_1.add_test_recipes)();
 (0, resource_model_1.resetModel)();
+(0, flow_rate_model_1.resetFlowRate)((0, resource_model_1.getIngredientNames)());
 // WEBSERVER CODE
 app.get('/', (req, res) => {
     res.send('Ecotracer Webserver is Running');
@@ -39,14 +44,70 @@ function randDouble(min, max, precision) {
 }
 // GET MACHINE STATS DATA
 app.get('/pub_stats', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let result = yield (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)(), false, req, res);
+    let result = yield (0, stats_model_1.getMachineStatsData)();
+    res.send(result);
+}));
+// GET LATEST BATCH DATA
+app.get('/pub_batch_data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let result = yield (0, batching_model_1.getLatestBatchData)();
+    res.send(result);
+}));
+// GET RESOURCES DATA
+app.get('/pub_res_data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let result = yield (0, resource_model_1.getResourcesData)();
+    console.log(result);
+    res.send(result);
+}));
+// GET CARBON DATA
+app.get('/pub_carbon_data', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let result = yield (0, carbon_model_1.getCarbonDataHourly)();
+    console.log(result);
     res.send(result);
 }));
 // UPDATE RESOURCES BASE ON FLOW RATE
+var has_batch_started = false;
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-    let data = yield (0, resource_model_1.updateResources)([10, 20, 30], false);
+    if ((yield (0, batching_model_1.getLatestBatchData)()) != null) {
+        yield (0, flow_rate_model_1.updateFlowRates)((0, mqtt_subscriber_2.getData)(), (0, resource_model_1.getIngredientNames)(), yield (0, batching_model_1.getLatestBatchData)());
+        yield (0, batching_model_1.updateBatchData)((0, resource_model_1.getIngredientNames)(), yield (0, flow_rate_model_1.getFlowRate)(), has_batch_started);
+        console.log(yield (0, batching_model_1.getLatestBatchData)());
+    }
+    yield (0, resource_model_1.updateResources)(yield (0, flow_rate_model_1.getFlowRate)(), false);
+    if ((0, mqtt_subscriber_2.getData)() != "No Data")
+        (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)(), has_batch_started); // ENABLE WHEN DATA IS COLLECTING
+    (0, carbon_model_1.updateCarbonData)(yield (0, stats_model_1.getMachineStatsData)());
     //console.log(data);
 }), 1000);
+// DEBUG START BATCH
+setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Started Batch`);
+    if ((yield BatchData.count()) <= 0) {
+        BatchData.insertMany([{
+                drink_name: "Black Tea",
+                current_item_count: 0,
+                max_item_count: 5,
+                consumption: [
+                    {
+                        ingredient_name: "Water",
+                        amount_used: 0,
+                        rate: 0
+                    },
+                    {
+                        ingredient_name: "Tea",
+                        amount_used: 0,
+                        rate: 0
+                    },
+                    {
+                        ingredient_name: "Milk",
+                        amount_used: 0,
+                        rate: 0
+                    }
+                ],
+                status: 0
+            }]);
+    }
+    has_batch_started = true;
+}), 5000);
 // ENABLE DEBUGGING DISPLAY DATA
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Received data: ${(0, mqtt_subscriber_2.getData)()}`);

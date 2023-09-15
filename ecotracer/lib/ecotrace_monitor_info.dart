@@ -17,20 +17,19 @@ class EcoTracerMachineInfoWidget extends StatefulWidget {
 
 class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
   late Timer requestTimer;
-  late List machineStats;
-  Map? machineInfoData;
+  Map? machineStats;
+  Map? machineResData;
 
   @override
   void initState() {
     super.initState();
     requestTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       machineStats = await getMachineStats();
-      List infoDataList = await getMachineInfo();
-      machineInfoData = infoDataList[infoDataList.length - 1];
-      debugPrint(machineInfoData.toString());
+      machineResData = await getMachineResources();
+      debugPrint(machineResData.toString());
 
       setState(() {
-        machineInfoData = infoDataList[infoDataList.length - 1];
+        
       });
     });
   }
@@ -43,7 +42,7 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (machineInfoData == null)
+    return (machineResData == null || machineStats == null)
         ? Container(
             padding: const EdgeInsets.only(bottom: 200),
             height: MediaQuery.of(context).size.height - 140,
@@ -111,22 +110,22 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
                       InfoProgressBar(
                           title: "Milk",
                           progress: MonitorInfoModel().getMilkVolumePercentage(
-                              infoData: machineInfoData!)!,
+                              resData: machineResData!)!,
                           fillColour: Colors.white),
                       InfoProgressBar(
                           title: "Tea",
                           progress: MonitorInfoModel().getTeaVolumePercentage(
-                              infoData: machineInfoData!)!,
+                              resData: machineResData!)!,
                           fillColour: AppColor.darkTeal),
                       InfoProgressBar(
                           title: "Water",
                           progress: MonitorInfoModel().getWaterVolumePercentage(
-                              infoData: machineInfoData!)!,
+                              resData: machineResData!)!,
                           fillColour: AppColor.statsBlue),
                       InfoProgressBar(
                           title: "Bottle",
                           progress: MonitorInfoModel().getBottleCountPercentage(
-                              infoData: machineInfoData!)!,
+                              resData: machineResData!)!,
                           fillColour: AppColor.statsPurple),
                     ])),
                 Container(
@@ -134,7 +133,7 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
                         horizontal: 20, vertical: 15),
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      "Machine Integrity",
+                      "Machine Statistics",
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: AppColor.brown,
@@ -142,15 +141,55 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
                     )),
                 Container(
                     margin: const EdgeInsets.symmetric(horizontal: 10),
-                    child: const Column(children: [
-                      InfoProgressBar(
-                          title: "Pipes",
-                          progress: 0.45,
-                          fillColour: AppColor.statsRed),
-                      InfoProgressBar(
-                          title: "Valves",
-                          progress: 0.68,
-                          fillColour: AppColor.statsYellow)
+                    child: Column(children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Expanded(flex: 1, child: Text(
+                              "Current:",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: AppColor.dark,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700),
+                            )),
+                            Expanded(flex: 1, child: Text(
+                              "${machineStats!["current"]} mA",
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                  color: AppColor.dark,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700),
+                            )),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Expanded(flex: 1, child: Text(
+                              "Voltage:",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: AppColor.dark,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700),
+                            )),
+                            Expanded(flex: 1, child: Text(
+                              "${machineStats!["voltage"]} V",
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                  color: AppColor.dark,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700),
+                            )),
+                          ],
+                        ),
+                      ),
                     ]))
               ]);
   }

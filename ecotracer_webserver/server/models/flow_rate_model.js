@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,16 +8,88 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateFlowRates = exports.getFlowRate = exports.resetFlowRate = void 0;
 const FlowRates = require('../schemas/flow_rates');
-function updateFlowRates(batch_payload, recipe_payload) {
+const DrinkRecipes = require('../schemas/drink_recipe');
+// WATER (INDEX 0) is taken from machine
+var def_flow_rates = [0.2, 0.4, 0.6];
+// RESET FLOW RATES
+function resetFlowRate(ingredient_names) {
+    let data = ingredient_names.map((name, i) => {
+        return {
+            name: name,
+            flow_rate: 0
+        };
+    });
+    FlowRates.insertMany([
+        {
+            flow_rates: data
+        }
+    ]);
+}
+exports.resetFlowRate = resetFlowRate;
+function getFlowRate() {
     return __awaiter(this, void 0, void 0, function* () {
-        let amounts_used = [];
-        let required_volumes = [];
         try {
-            batch_payload[batch_payload.length - 1]["consumption"];
+            let flow_rates_collection = yield FlowRates.find();
+            return flow_rates_collection[flow_rates_collection.length - 1];
         }
         catch (error) {
             console.log(error);
         }
     });
 }
+exports.getFlowRate = getFlowRate;
+// batch_payload is single item, recipe_payload is multi-item
+function updateFlowRates(data_payload, ingredient_names, batch_payload) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let flow_rates = [];
+        try {
+            let recipe = yield DrinkRecipes.findOne({ name: batch_payload["drink_name"] });
+            console.log(recipe);
+            // Reset Flow Rates
+            if (batch_payload["status"] == 1) {
+                let data = ingredient_names.map((name, i) => {
+                    return {
+                        name: name,
+                        flow_rate: 0
+                    };
+                });
+                FlowRates.insertMany([{
+                        flow_rates: data
+                    }]);
+                return data;
+            }
+            // Loop through all ingredients
+            let data = ingredient_names.map((name, i) => {
+                let required_volume = recipe["ingredients"][i]["amount"];
+                console.log(`Batch ${JSON.stringify(batch_payload["consumption"][i])}`);
+                let amount_used = batch_payload["consumption"][i]["amount_used"];
+                // If still ongoing
+                if (amount_used >= required_volume) {
+                    flow_rates.push(0);
+                }
+                else {
+                    // Use water flow rate data from machine, the rest is simulated
+                    // if(i == 0)
+                    //     flow_rates.push(data_payload["liquidFlowRate"]);
+                    //else
+                    flow_rates.push(def_flow_rates[i]);
+                }
+                return {
+                    name: name,
+                    flow_rate: flow_rates[i]
+                };
+            });
+            FlowRates.insertMany([{
+                    flow_rates: data
+                }]);
+            return data;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
+exports.updateFlowRates = updateFlowRates;

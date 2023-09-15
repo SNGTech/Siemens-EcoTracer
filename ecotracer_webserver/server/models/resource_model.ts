@@ -1,9 +1,9 @@
 const MachineResouces = require('../schemas/machine_resources');
 
 // IN FUTURE TO STORE AND QUERY IN A DEDICATED COLLECTION
-var ingredient_names = [ 'water', 'milk', 'tea' ];
-var max_volumes = [2000, 1000, 2204];
-var max_bottle_count = 2304;
+var ingredient_names = [ 'Water', 'Tea', 'Milk' ];
+var max_volumes = [1, 1, 0.4];
+var max_bottle_count = 40;
 
 function resetModel() {
     let resources_arr = ingredient_names.map((name, i) => {
@@ -18,12 +18,12 @@ function resetModel() {
         {
             volume_data: resources_arr,
             max_bottle_count: max_bottle_count,
-            bottle_count: 2304
+            bottle_count: max_bottle_count
         }
     ]);
 }
 
-async function updateResources(flow_rates: Array<number>, has_finished_item: boolean) {
+async function updateResources(flow_rates_payload, has_finished_item: boolean) {
     let new_ingredient_names = [];
     let new_max_volumes = [];
     let new_current_volumes = [];
@@ -41,8 +41,7 @@ async function updateResources(flow_rates: Array<number>, has_finished_item: boo
             let prev_current_volume = resourcesData.length > 1 
             ? 
             resourcesData[resourcesData.length - 1]["volume_data"][i]["current_volume"] : max_volumes[i];
-
-            new_current_volumes.push(prev_current_volume - (flow_rates[i] / 60));
+            new_current_volumes.push(prev_current_volume - (flow_rates_payload["flow_rates"][i]["flow_rate"] / 60));
         });
 
         new_max_bottle_count = max_bottle_count;
@@ -77,4 +76,18 @@ async function updateResources(flow_rates: Array<number>, has_finished_item: boo
     }
 }
 
-export { resetModel, updateResources };
+async function getResourcesData() {
+    try {
+        let data = await MachineResouces.find();
+        return data[data.length - 1];
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+function getIngredientNames() {
+    return ingredient_names;
+}
+
+export { resetModel, updateResources, getResourcesData, getIngredientNames };

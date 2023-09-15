@@ -29,29 +29,26 @@ function getMachineStatsData() {
     });
 }
 exports.getMachineStatsData = getMachineStatsData;
-function updateMachineStats(payload, _has_batch_started, req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            let current = payload["currentRMS"];
-            let voltage = payload["supplyVoltage"];
-            console.log(voltage);
-            let energy_rate = getPower(current, voltage);
-            let has_batch_started = _has_batch_started;
-            let status = getStatus(voltage, has_batch_started);
-            let data = {
-                current: current,
-                voltage: voltage,
-                energy_rate: energy_rate,
-                has_batch_started: has_batch_started,
-                status: status
-            };
-            MachineStats.insertMany([data]);
-            return data;
-        }
-        catch (error) {
-            console.log(error);
-        }
-    });
+function updateMachineStats(payload, _has_batch_started) {
+    try {
+        let current = payload["currentRMS"];
+        let voltage = payload["supplyVoltage"];
+        let energy_rate = getPower(current, voltage);
+        let has_batch_started = _has_batch_started;
+        let status = getStatus(voltage, has_batch_started);
+        let data = {
+            current: current,
+            voltage: voltage,
+            energy_rate: energy_rate,
+            has_batch_started: has_batch_started,
+            status: status
+        };
+        MachineStats.insertMany([data]);
+        return data;
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
 exports.updateMachineStats = updateMachineStats;
 function getPower(current, voltage) {

@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:ecotracer/constants/colours.dart';
 import 'package:ecotracer/ecotrace_monitor_info.dart';
+import 'package:ecotracer/models/requests.dart';
+import 'package:ecotracer/models/setup_model.dart';
 import 'package:flutter/material.dart';
 
 class EcoTracerSetupPage extends StatelessWidget {
@@ -64,9 +68,42 @@ class EcoTracerSetupWidget extends StatefulWidget {
 }
 
 class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
+  late Timer requestTimer;
+  Map? batchData;
+
+  @override
+  void initState() {
+    super.initState();
+    requestTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      batchData = await getBatchDataInfo();
+      debugPrint(batchData.toString());
+
+      setState(() {
+        
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    requestTimer.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return (batchData == null) ? Container(
+            padding: const EdgeInsets.only(bottom: 200),
+            height: MediaQuery.of(context).size.height - 140,
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColor.darkTeal),
+                strokeCap: StrokeCap.round,
+                strokeWidth: 5,
+              ),
+            ),
+          ) 
+        : Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -81,7 +118,7 @@ class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
                     color: AppColor.brown,
                     fontSize: 20),
               )),
-          const CurrentBatchWidget(),
+          CurrentBatchWidget(batchData: batchData!),
           Container(
               margin: const EdgeInsets.only(
                   top: 25, bottom: 15, left: 20, right: 20),
@@ -105,7 +142,9 @@ class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
                   const SizedBox(width: 15),
                   Expanded(flex: 1, child: ButtonWidget(label: "Remove Batch"))
                 ],
-              ))
+              )),
+          // TEMPORARY EXPANDING OF WIDGET (PLEASE CHANGE)
+          Container(height: 400, decoration: const BoxDecoration(color: AppColor.background))
         ]);
   }
 }
@@ -135,8 +174,11 @@ class ButtonWidget extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class CurrentBatchWidget extends StatelessWidget {
-  const CurrentBatchWidget({super.key});
+  Map batchData;
+
+  CurrentBatchWidget({super.key, required this.batchData});
 
   @override
   Widget build(BuildContext context) {
@@ -154,18 +196,18 @@ class CurrentBatchWidget extends StatelessWidget {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                "Batch 0/45",
+                "Batch ${SetupModel().getCurrentItemCount(batchData: batchData)}/${SetupModel().getMaxItemCount(batchData: batchData)}",
                 style: const TextStyle(color: AppColor.offWhite, fontSize: 15),
               ),
             ),
             const SizedBox(height: 10),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 10),
-              child: const InfoProgressBar(
-                title: "Black Tea",
-                progress: 0.45,
-                fillColour: Color(0xFFD6DEDB),
-                backgroundColour: Color(0xFF73A79E),
+              child: InfoProgressBar(
+                title: SetupModel().getDrinkName(batchData: batchData)!,
+                progress: SetupModel().getPercentage(batchData: batchData)!,
+                fillColour: const Color(0xFFD6DEDB),
+                backgroundColour: const Color(0xFF73A79E),
                 textColour: AppColor.offWhite,
                 textSize: 20,
               ),

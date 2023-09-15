@@ -12,8 +12,8 @@ class EcoTracerHomePage extends StatelessWidget {
   final topBarHeight = 140.0;
 
   final List availableProcesses = [
-    BatchProcess("Bubble Tea", 350, ProcessStatus.making),
-    BatchProcess("Green Tea", 50, ProcessStatus.inQueue),
+    BatchProcess("Black Tea", 5, ProcessStatus.inQueue),
+    BatchProcess("Green Tea", 35, ProcessStatus.inQueue),
     BatchProcess("Milk Tea", 623, ProcessStatus.inQueue),
     BatchProcess("Passion Fruit Tea", 34, ProcessStatus.paused)
   ];
@@ -144,7 +144,7 @@ class EcoTracerHomeWidget extends StatelessWidget {
             child: CircularPercentIndicator(
               radius: 90.0,
               lineWidth: 12.0,
-              percent: 0.62,
+              percent: 0.7,
               backgroundColor: AppColor.percentBackground,
               progressColor: AppColor.darkTeal,
               circularStrokeCap: CircularStrokeCap.round,
@@ -152,7 +152,7 @@ class EcoTracerHomeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "62%",
+                    "70%",
                     style: TextStyle(
                         color: AppColor.dark,
                         fontSize: 50,

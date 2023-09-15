@@ -18,11 +18,10 @@ async function getMachineStatsData() {
     }
 }
 
-async function updateMachineStats(payload, _has_batch_started: boolean, req: Request, res: Response) {
+function updateMachineStats(payload, _has_batch_started: boolean) {
     try {
         let current = payload["currentRMS"];
         let voltage = payload["supplyVoltage"];
-        console.log(voltage);
         let energy_rate = getPower(current, voltage);
         let has_batch_started = _has_batch_started;
         let status = getStatus(voltage, has_batch_started);

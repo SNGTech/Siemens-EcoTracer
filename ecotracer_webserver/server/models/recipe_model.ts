@@ -9,11 +9,11 @@ const add_test_recipes = async () => {
                 ingredients: [
                     {
                         ingredient_name: "Water",
-                        amount: 0.25
+                        amount: 0.05
                     },
                     {
                         ingredient_name: "Tea",
-                        amount: 0.8
+                        amount: 0.09
                     },
                     {
                         ingredient_name: "Milk",
@@ -34,7 +34,7 @@ const add_test_recipes = async () => {
                     },
                     {
                         ingredient_name: "Milk",
-                        amount: 1.25
+                        amount: 0.2
                     }
                 ]
             }
@@ -42,4 +42,14 @@ const add_test_recipes = async () => {
     }
 }
 
-export { add_test_recipes };
+async function getRecipes() {
+    try {
+        let recipes = DrinkRecipes.find();
+        return recipes[recipes.length - 1];
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+export { add_test_recipes, getRecipes };

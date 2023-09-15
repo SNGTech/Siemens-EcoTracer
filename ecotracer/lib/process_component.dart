@@ -29,7 +29,7 @@ class ProcessComponent extends StatelessWidget {
               Text(
                 () {
                   if (process?.getStatus?.index == ProcessStatus.making.index) {
-                    return "${process?.getStatus?.getDescriptor}: 67%";
+                    return "${process?.getStatus?.getDescriptor}: 0%";
                   } else {
                     return "${process?.getStatus?.getDescriptor}";
                   }

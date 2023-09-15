@@ -106,7 +106,7 @@ class _EcoTracerCO2WidgetState extends State<EcoTracerCO2Widget> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "30.06",
+                              "29.98",
                               style: TextStyle(
                                   color: AppColor.offWhite,
                                   fontSize: 40,
@@ -154,7 +154,7 @@ class _EcoTracerCO2WidgetState extends State<EcoTracerCO2Widget> {
             padding: const EdgeInsets.only(top: 25, bottom: 30, left: 25, right: 25),
             alignment: Alignment.centerLeft,
             child: const Text(
-              "Carbon Consumption",
+              "Carbon Consumption (kt)",
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: AppColor.brown,
@@ -163,8 +163,18 @@ class _EcoTracerCO2WidgetState extends State<EcoTracerCO2Widget> {
           Container(
             height: 300,
             alignment: Alignment.center,
-            margin: const EdgeInsets.only(bottom: 25, left: 5, right: 30),
+            margin: const EdgeInsets.only(bottom: 0, left: 5, right: 30),
             child: CO2LineChart()),
+          Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  child: const Text(
+                    "Hours",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: AppColor.dark,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700),
+                  )),
       ],
     );
   }

@@ -21,6 +21,10 @@ const BatchDataSchema = new Schema({
             rate: Number
         }],
         default: {}
+    },
+    status: {
+        type: Number,
+        required: true
     }
 }, {
     collection: "batch_data"

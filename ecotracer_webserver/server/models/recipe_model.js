@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.add_test_recipes = void 0;
+exports.getRecipes = exports.add_test_recipes = void 0;
 const DrinkRecipes = require('../schemas/drink_recipe');
 // INITIALISE SOME MAIN DRINKS FOR TESTING
 const add_test_recipes = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -20,11 +20,11 @@ const add_test_recipes = () => __awaiter(void 0, void 0, void 0, function* () {
                 ingredients: [
                     {
                         ingredient_name: "Water",
-                        amount: 0.25
+                        amount: 0.05
                     },
                     {
                         ingredient_name: "Tea",
-                        amount: 0.8
+                        amount: 0.09
                     },
                     {
                         ingredient_name: "Milk",
@@ -45,7 +45,7 @@ const add_test_recipes = () => __awaiter(void 0, void 0, void 0, function* () {
                     },
                     {
                         ingredient_name: "Milk",
-                        amount: 1.25
+                        amount: 0.2
                     }
                 ]
             }
@@ -53,3 +53,16 @@ const add_test_recipes = () => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.add_test_recipes = add_test_recipes;
+function getRecipes() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let recipes = DrinkRecipes.find();
+            return recipes[recipes.length - 1];
+        }
+        catch (error) {
+            console.log(error);
+            return null;
+        }
+    });
+}
+exports.getRecipes = getRecipes;
