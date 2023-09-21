@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHasItemFinished = exports.updateBatchData = exports.getLatestBatchData = void 0;
 const resource_model_1 = require("./resource_model");
+const DrinkRecipes = require('../schemas/drink_recipe');
 const BatchData = require('../schemas/batch_data');
 var is_finished_item = false;
 const batchStatus = {
@@ -37,9 +38,11 @@ function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started
                 current_item_count = batch_data[batch_data.length - 1]["current_item_count"];
                 max_item_count = batch_data[batch_data.length - 1]["max_item_count"];
                 status = getBatchStatus(true, current_item_count, max_item_count);
+                let recipe = yield DrinkRecipes.findOne({ name: drink_name });
                 if (status == batchStatus.COMPLETED)
                     return batch_data[batch_data.length - 1];
                 for (let i = 0; i < flow_rates_payload["flow_rates"].length; i++) {
+                    let required_volume = recipe["ingredients"][i]["amount"];
                     flow_rates.push(flow_rates_payload["flow_rates"][i]["flow_rate"]);
                     amounts_used.push(batch_data[batch_data.length - 1]["consumption"][i]["amount_used"] + flow_rates[i] / 60);
                     // Create consumption data
@@ -48,12 +51,12 @@ function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started
                         amount_used: amounts_used[i],
                         rate: flow_rates[i]
                     });
-                    // When all flow rates are 0 -> item is finished
-                    if (flow_rates[i] > 0) {
+                    //console.log(`${amounts_used[i]} | ${required_volume}`);
+                    // When all volumes are met, item is finished
+                    if (amounts_used[i] < required_volume) {
                         is_finished_item = false;
                     }
                 }
-                // TODO: ENSURE IT ONLY ACTIVATES ONCE AFTER EVERY ITEM COMPLETION
                 if (is_finished_item) {
                     (0, resource_model_1.decrementBottleCount)();
                     current_item_count++;

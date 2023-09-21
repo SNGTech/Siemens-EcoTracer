@@ -69,18 +69,27 @@ class EcoTracerSetupWidget extends StatefulWidget {
 
 class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
   late Timer requestTimer;
-  Map? batchData;
+  Map batchData = {};
 
   @override
   void initState() {
     super.initState();
-    requestTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      batchData = await getBatchDataInfo();
-      debugPrint(batchData.toString());
+    startFetching();
+    requestTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+      startFetching();
+    });
+  }
 
-      setState(() {
-        
-      });
+  void startFetching() async {
+    batchData = await getBatchDataInfo();
+    
+    debugPrint(batchData.toString());
+    if(batchData.isEmpty) {
+      return;
+    }
+    
+    setState(() {
+      
     });
   }
 
@@ -92,18 +101,7 @@ class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (batchData == null) ? Container(
-            padding: const EdgeInsets.only(bottom: 200),
-            height: MediaQuery.of(context).size.height - 140,
-            child: const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColor.darkTeal),
-                strokeCap: StrokeCap.round,
-                strokeWidth: 5,
-              ),
-            ),
-          ) 
-        : Column(
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -118,7 +116,24 @@ class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
                     color: AppColor.brown,
                     fontSize: 20),
               )),
-          CurrentBatchWidget(batchData: batchData!),
+          (batchData.isEmpty) ? Container(
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            child: Row( 
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                alignment: Alignment.center,
+                child: const Text(
+                  "No Batch Has Been Started!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: AppColor.dark,
+                      fontSize: 18),
+                ))]),
+          ) 
+              : CurrentBatchWidget(batchData: batchData),
           Container(
               margin: const EdgeInsets.only(
                   top: 25, bottom: 15, left: 20, right: 20),

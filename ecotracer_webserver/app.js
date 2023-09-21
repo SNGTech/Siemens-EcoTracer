@@ -25,6 +25,7 @@ const carbon_model_1 = require("./server/models/carbon_model");
 const BatchData = require('./server/schemas/batch_data');
 const app = (0, express_1.default)();
 const PORT = 5000;
+var has_batch_started = false;
 app.use(express_1.default.json());
 app.listen(PORT, () => {
     console.log(`Express App listening on Port: ${PORT}`);
@@ -65,8 +66,30 @@ app.get('/pub_carbon_data', (req, res) => __awaiter(void 0, void 0, void 0, func
     console.log(result);
     res.send(result);
 }));
+// POST START BATCHING SIGNAL
+app.post('/post_start_batching', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let drink_name = 0; // GET RESPONSE DRINK NAME;
+    let max_item_count = 0; // GET RESPONSE MAX ITEM COUNT
+    let consumption = [];
+    for (let i = 0; i < (0, resource_model_1.getIngredientNames)().length; i++) {
+        // Create consumption data
+        consumption.push({
+            ingredient_name: (0, resource_model_1.getIngredientNames)()[i],
+            amount_used: 0,
+            rate: 0
+        });
+    }
+    BatchData.insertMany([{
+            drink_name: drink_name,
+            current_item_count: 0,
+            max_item_count: max_item_count,
+            consumption: consumption,
+            status: 0
+        }]);
+    console.log(`Started Batch: ` + drink_name);
+    has_batch_started = true;
+}));
 // UPDATE RESOURCES BASE ON FLOW RATE
-var has_batch_started = false;
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield (0, batching_model_1.getLatestBatchData)()) != null) {
         yield (0, flow_rate_model_1.updateFlowRates)((0, mqtt_subscriber_2.getData)(), (0, resource_model_1.getIngredientNames)(), yield (0, batching_model_1.getLatestBatchData)());
@@ -80,35 +103,35 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     //console.log(data);
 }), 1000);
 // DEBUG START BATCH
-setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Started Batch`);
-    if ((yield BatchData.count()) <= 0) {
-        BatchData.insertMany([{
-                drink_name: "Black Tea",
-                current_item_count: 0,
-                max_item_count: 5,
-                consumption: [
-                    {
-                        ingredient_name: "Water",
-                        amount_used: 0,
-                        rate: 0
-                    },
-                    {
-                        ingredient_name: "Tea",
-                        amount_used: 0,
-                        rate: 0
-                    },
-                    {
-                        ingredient_name: "Milk",
-                        amount_used: 0,
-                        rate: 0
-                    }
-                ],
-                status: 0
-            }]);
-    }
-    has_batch_started = true;
-}), 5000);
+// setInterval(async () => {
+//     console.log(`Started Batch`);
+//     if(await BatchData.count() <= 0) {
+//     BatchData.insertMany([{
+//         drink_name: "Black Tea",
+//         current_item_count: 0,
+//         max_item_count: 5,
+//         consumption: [
+//             {
+//                 ingredient_name: "Water",
+//                 amount_used: 0,
+//                 rate: 0
+//             },
+//             {
+//                 ingredient_name: "Tea",
+//                 amount_used: 0,
+//                 rate: 0
+//             },
+//             {
+//                 ingredient_name: "Milk",
+//                 amount_used: 0,
+//                 rate: 0
+//             }
+//         ],
+//         status: 0
+//     }]);
+// }
+// has_batch_started = true;
+// }, 5000);
 // ENABLE DEBUGGING DISPLAY DATA
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Received data: ${(0, mqtt_subscriber_2.getData)()}`);

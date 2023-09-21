@@ -35,9 +35,13 @@ Future<Map> getBatchDataInfo() async {
   debugPrint("Fetching GET Batch Data request...");
   Response response =
       await get(Uri.parse("http://$IP_ADDRESS:5000/pub_batch_data"));
-
+  Map<String, dynamic> batchData = {};
   if (response.statusCode == 200) {
-    Map<String, dynamic> batchData = jsonDecode(response.body);
+    try {
+      batchData = jsonDecode(response.body);
+    } catch(e) {
+      return batchData;
+    }
     debugPrint("Done fetching Batch Data");
     return batchData;
   } else {

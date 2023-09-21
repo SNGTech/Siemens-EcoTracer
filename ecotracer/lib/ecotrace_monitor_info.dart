@@ -23,14 +23,19 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
   @override
   void initState() {
     super.initState();
+    startFetching();
     requestTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      machineStats = await getMachineStats();
-      machineResData = await getMachineResources();
-      debugPrint(machineResData.toString());
+      startFetching();
+    });
+  }
 
-      setState(() {
+  void startFetching() async {
+    machineStats = await getMachineStats();
+    machineResData = await getMachineResources();
+    debugPrint(machineResData.toString());
+
+    setState(() {
         
-      });
     });
   }
 

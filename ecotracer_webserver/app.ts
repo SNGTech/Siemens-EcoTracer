@@ -12,6 +12,8 @@ const BatchData = require('./server/schemas/batch_data');
 const app = express();
 const PORT = 5000;
 
+var has_batch_started = false;
+
 app.use(express.json());
 
 app.listen(PORT, () => {
@@ -64,9 +66,36 @@ app.get('/pub_carbon_data', async (req, res) => {
     res.send(result);
 });
 
-// UPDATE RESOURCES BASE ON FLOW RATE
+// POST START BATCHING SIGNAL
+app.post('/post_start_batching', async (req, res) => {
 
-var has_batch_started = false;
+    let drink_name = 0;// GET RESPONSE DRINK NAME;
+    let max_item_count = 0; // GET RESPONSE MAX ITEM COUNT
+
+    let consumption = [];
+    for(let i = 0; i < getIngredientNames().length; i++) {
+        // Create consumption data
+        consumption.push(
+            {
+                ingredient_name: getIngredientNames()[i],
+                amount_used: 0,
+                rate: 0
+            }
+        );
+    }
+    BatchData.insertMany([{
+        drink_name: drink_name,
+        current_item_count: 0,
+        max_item_count: max_item_count,
+        consumption: consumption,
+        status: 0
+    }]);
+
+    console.log(`Started Batch: ` + drink_name);
+    has_batch_started = true;
+});
+
+// UPDATE RESOURCES BASE ON FLOW RATE
 
 setInterval(async() => {
     if(await getLatestBatchData() != null) {
@@ -82,35 +111,35 @@ setInterval(async() => {
 }, 1000);
 
 // DEBUG START BATCH
-setInterval(async () => {
-    console.log(`Started Batch`);
-    if(await BatchData.count() <= 0) {
-    BatchData.insertMany([{
-        drink_name: "Black Tea",
-        current_item_count: 0,
-        max_item_count: 5,
-        consumption: [
-            {
-                ingredient_name: "Water",
-                amount_used: 0,
-                rate: 0
-            },
-            {
-                ingredient_name: "Tea",
-                amount_used: 0,
-                rate: 0
-            },
-            {
-                ingredient_name: "Milk",
-                amount_used: 0,
-                rate: 0
-            }
-        ],
-        status: 0
-    }]);
-}
-has_batch_started = true;
-}, 5000);
+// setInterval(async () => {
+//     console.log(`Started Batch`);
+//     if(await BatchData.count() <= 0) {
+//     BatchData.insertMany([{
+//         drink_name: "Black Tea",
+//         current_item_count: 0,
+//         max_item_count: 5,
+//         consumption: [
+//             {
+//                 ingredient_name: "Water",
+//                 amount_used: 0,
+//                 rate: 0
+//             },
+//             {
+//                 ingredient_name: "Tea",
+//                 amount_used: 0,
+//                 rate: 0
+//             },
+//             {
+//                 ingredient_name: "Milk",
+//                 amount_used: 0,
+//                 rate: 0
+//             }
+//         ],
+//         status: 0
+//     }]);
+// }
+// has_batch_started = true;
+// }, 5000);
 
 
 
