@@ -107,11 +107,14 @@ setInterval(async() => {
         console.log(await getLatestBatchData());
     }
     await updateResources(await getFlowRate());
-    if(getData() != "No Data")
-        updateMachineStats(getData()); // ENABLE WHEN DATA IS COLLECTING
     //updateCarbonData(await getMachineStatsData());
     //console.log(data);
 }, 1000);
+
+setInterval(async() => {
+    if(getData() != "No Data")
+        updateMachineStats(getData()); // ENABLE WHEN DATA IS COLLECTING
+}, 2500);
 
 // DEBUG START BATCH
 // setInterval(async () => {

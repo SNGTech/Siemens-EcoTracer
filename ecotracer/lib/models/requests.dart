@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
@@ -6,12 +9,23 @@ var IP_ADDRESS = ""; //"192.168.213.38";
 
 Future<bool> getServerStatus(String ipAddress) async {
   debugPrint("Fetching Server Status request...");
-  Response response = await get(Uri.parse("http://$ipAddress:5000/ping"));
-  if(response.statusCode == 200) {
-    IP_ADDRESS = ipAddress;
-    return true;
+  try {
+    Response response = await get(Uri.parse("http://$ipAddress:5000/ping")).timeout(const Duration(seconds: 2));
+    if(response.statusCode == 200) {
+      IP_ADDRESS = ipAddress;
+      return true;
+    }
+    return false;
+  } on TimeoutException {
+    debugPrint("A network error has occurred!");
+    return false;
+  } on SocketException {
+    debugPrint("A network error has occurred!");
+    return false;
+  } catch(err) {
+    debugPrint("A network error has occurred!");
+    return false;
   }
-  return false;
 }
 
 Future<Map> getMachineStats() async {

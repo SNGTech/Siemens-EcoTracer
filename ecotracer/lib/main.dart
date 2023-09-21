@@ -73,7 +73,7 @@ class EcoTracerPage extends StatefulWidget {
 class EcoTracerState extends State<EcoTracerPage> {
   int currentPageIndex = 0;
 
-  late Timer connectingTimer;
+  Timer? connectingTimer;
   bool isConnected = false;
   bool isStillConnected = false;
 
@@ -85,7 +85,7 @@ class EcoTracerState extends State<EcoTracerPage> {
   @override
   void dispose() {
     super.dispose();
-    connectingTimer.cancel();
+    if(connectingTimer != null) connectingTimer!.cancel();
   }
 
   @override
@@ -123,11 +123,12 @@ class EcoTracerState extends State<EcoTracerPage> {
           },
         ),
         body: widget.child) :
-        ConnectingPage(getServerStatusCallback: () {
-          debugPrint("TEST");
+        ConnectingPage((String ipAddress) {
+          if(connectingTimer != null) connectingTimer!.cancel();
           connectingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-            isConnected = await getServerStatus(IP_ADDRESS);
+            isConnected = await getServerStatus(ipAddress);
             if(!isConnected && isStillConnected) {
+              setState(() {});
               isStillConnected = false;
             }
             if(isConnected && !isStillConnected) {

@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class ConnectingPage extends StatefulWidget {
-  void Function()? getServerStatusCallback;
-  ConnectingPage({required this.getServerStatusCallback, super.key});
+  void Function(String ipAddress) getServerStatusCallback;
+  ConnectingPage(this.getServerStatusCallback, {super.key});
 
   @override
   State<ConnectingPage> createState() => _ConnectingState();
@@ -35,6 +35,7 @@ class _ConnectingState extends State<ConnectingPage> with SingleTickerProviderSt
 
   @override
   void dispose() {
+    animController.dispose();
     super.dispose();
     textfieldController.dispose();
   }
@@ -86,8 +87,8 @@ class _ConnectingState extends State<ConnectingPage> with SingleTickerProviderSt
                     margin: const EdgeInsets.symmetric(horizontal: 100),
                     height: 40,
                   child: ButtonWidget(label: "Connect", callback: () {
+                    widget.getServerStatusCallback.call(textfieldController.text);
                     animController.forward();
-                    widget.getServerStatusCallback;
                   }))
                   ],
                 )

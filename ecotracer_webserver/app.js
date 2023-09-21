@@ -100,11 +100,13 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         console.log(yield (0, batching_model_1.getLatestBatchData)());
     }
     yield (0, resource_model_1.updateResources)(yield (0, flow_rate_model_1.getFlowRate)());
-    if ((0, mqtt_subscriber_2.getData)() != "No Data")
-        (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)()); // ENABLE WHEN DATA IS COLLECTING
     //updateCarbonData(await getMachineStatsData());
     //console.log(data);
 }), 1000);
+setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+    if ((0, mqtt_subscriber_2.getData)() != "No Data")
+        (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)()); // ENABLE WHEN DATA IS COLLECTING
+}), 2500);
 // DEBUG START BATCH
 // setInterval(async () => {
 //     console.log(`Started Batch`);

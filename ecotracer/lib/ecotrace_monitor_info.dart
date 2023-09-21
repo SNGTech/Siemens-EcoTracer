@@ -41,8 +41,8 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
 
   @override
   void dispose() {
-    super.dispose();
     requestTimer.cancel();
+    super.dispose();
   }
 
   @override

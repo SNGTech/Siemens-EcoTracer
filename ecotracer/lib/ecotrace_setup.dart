@@ -97,8 +97,8 @@ class _EcoTracerSetupState extends State<EcoTracerSetupWidget> {
 
   @override
   void dispose() {
-    super.dispose();
     requestTimer.cancel();
+    super.dispose();
   }
 
   @override
