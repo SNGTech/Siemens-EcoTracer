@@ -3,23 +3,24 @@ const DrinkRecipes = require('../schemas/drink_recipe');
 
 const BatchData = require('../schemas/batch_data');
 
-var is_finished_item = false;
-
 const batchStatus = {
     ONGOING: 0,
     COMPLETED: 1
 }
 
-async function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started) {
+var is_finished_item = false;
+var status = batchStatus.ONGOING;
+
+
+async function updateBatchData(ingredient_names, flow_rates_payload) {
     is_finished_item = true;
     let drink_name;
     let current_item_count;
     let max_item_count;
-    let status = batchStatus.ONGOING;
     let flow_rates = [];
     let consumption = [];
     let amounts_used = [];
-    if(has_batch_started) {
+    if(status == batchStatus.ONGOING) {
         
         // STARTING BATCH DATA TO BE SENT BY DB
         try {
@@ -108,8 +109,17 @@ async function getLatestBatchData() {
     }
 }
 
+function hasBatchStarted() {
+    return status == batchStatus.ONGOING;
+}
+
+function setBatchStarted() {
+    status = batchStatus.ONGOING;
+}
+
 function getHasItemFinished() {
     return is_finished_item;
 }
 
-export { getLatestBatchData, updateBatchData, getHasItemFinished };
+export { getLatestBatchData, updateBatchData, getHasItemFinished, hasBatchStarted, setBatchStarted };
+export { batchStatus };

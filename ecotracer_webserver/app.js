@@ -25,7 +25,6 @@ const carbon_model_1 = require("./server/models/carbon_model");
 const BatchData = require('./server/schemas/batch_data');
 const app = (0, express_1.default)();
 const PORT = 5000;
-var has_batch_started = false;
 app.use(express_1.default.json());
 app.listen(PORT, () => {
     console.log(`Express App listening on Port: ${PORT}`);
@@ -44,6 +43,10 @@ app.get('/', (req, res) => {
 function randDouble(min, max, precision) {
     return parseFloat((min + (max - min) * Math.random()).toFixed(precision));
 }
+app.get('/ping', (req, res) => {
+    res.send(true);
+    console.log("PINGING SERVER");
+});
 // GET MACHINE STATS DATA
 app.get('/pub_stats', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let result = yield (0, stats_model_1.getMachineStatsData)();
@@ -67,9 +70,9 @@ app.get('/pub_carbon_data', (req, res) => __awaiter(void 0, void 0, void 0, func
     res.send(result);
 }));
 // POST START BATCHING SIGNAL
-app.post('/post_start_batching', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let drink_name = 0; // GET RESPONSE DRINK NAME;
-    let max_item_count = 0; // GET RESPONSE MAX ITEM COUNT
+app.post('/post_start_batch', (req, res) => {
+    let drink_name = req.body["drink_name"]; // GET RESPONSE DRINK NAME;
+    let max_item_count = req.body["max_item_count"]; // GET RESPONSE MAX ITEM COUNT
     let consumption = [];
     for (let i = 0; i < (0, resource_model_1.getIngredientNames)().length; i++) {
         // Create consumption data
@@ -87,18 +90,18 @@ app.post('/post_start_batching', (req, res) => __awaiter(void 0, void 0, void 0,
             status: 0
         }]);
     console.log(`Started Batch: ` + drink_name);
-    has_batch_started = true;
-}));
+    (0, batching_model_1.setBatchStarted)();
+});
 // UPDATE RESOURCES BASE ON FLOW RATE
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield (0, batching_model_1.getLatestBatchData)()) != null) {
         yield (0, flow_rate_model_1.updateFlowRates)((0, mqtt_subscriber_2.getData)(), (0, resource_model_1.getIngredientNames)(), yield (0, batching_model_1.getLatestBatchData)());
-        yield (0, batching_model_1.updateBatchData)((0, resource_model_1.getIngredientNames)(), yield (0, flow_rate_model_1.getFlowRate)(), has_batch_started);
+        yield (0, batching_model_1.updateBatchData)((0, resource_model_1.getIngredientNames)(), yield (0, flow_rate_model_1.getFlowRate)());
         console.log(yield (0, batching_model_1.getLatestBatchData)());
     }
     yield (0, resource_model_1.updateResources)(yield (0, flow_rate_model_1.getFlowRate)());
     if ((0, mqtt_subscriber_2.getData)() != "No Data")
-        (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)(), has_batch_started); // ENABLE WHEN DATA IS COLLECTING
+        (0, stats_model_1.updateMachineStats)((0, mqtt_subscriber_2.getData)()); // ENABLE WHEN DATA IS COLLECTING
     //updateCarbonData(await getMachineStatsData());
     //console.log(data);
 }), 1000);

@@ -2,7 +2,17 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 
-const IP_ADDRESS = "192.168.213.38";
+var IP_ADDRESS = ""; //"192.168.213.38";
+
+Future<bool> getServerStatus(String ipAddress) async {
+  debugPrint("Fetching Server Status request...");
+  Response response = await get(Uri.parse("http://$ipAddress:5000/ping"));
+  if(response.statusCode == 200) {
+    IP_ADDRESS = ipAddress;
+    return true;
+  }
+  return false;
+}
 
 Future<Map> getMachineStats() async {
   debugPrint("Fetching GET Machine Stats request...");

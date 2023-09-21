@@ -1,17 +1,17 @@
 class SetupModel {
-  double? getPercentage({required Map batchData}) {
+  double getPercentage({required Map batchData}) {
     return batchData["current_item_count"] / batchData["max_item_count"];
   }
 
-  String? getDrinkName({required Map batchData}) {
+  String getDrinkName({required Map batchData}) {
     return batchData["drink_name"];
   }
 
-  int? getCurrentItemCount({required Map batchData}) {
+  int getCurrentItemCount({required Map batchData}) {
     return batchData["current_item_count"];
   }
 
-  int? getMaxItemCount({required Map batchData}) {
+  int getMaxItemCount({required Map batchData}) {
     return batchData["max_item_count"];
   }
 }

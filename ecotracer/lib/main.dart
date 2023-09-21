@@ -1,8 +1,12 @@
+import "dart:async";
+
 import "package:ecotracer/ecotrace_co2_tracker.dart";
+import "package:ecotracer/ecotrace_connecting.dart";
 import "package:ecotracer/ecotrace_home.dart";
 import 'package:ecotracer/ecotrace_monitor.dart';
 import "package:ecotracer/ecotrace_options.dart";
 import "package:ecotracer/ecotrace_setup.dart";
+import "package:ecotracer/models/requests.dart";
 import "package:flutter/material.dart";
 import 'package:go_router/go_router.dart';
 
@@ -69,9 +73,25 @@ class EcoTracerPage extends StatefulWidget {
 class EcoTracerState extends State<EcoTracerPage> {
   int currentPageIndex = 0;
 
+  late Timer connectingTimer;
+  bool isConnected = false;
+  bool isStillConnected = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    connectingTimer.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isConnected ? 
+    Scaffold(
         bottomNavigationBar: NavigationBar(
           indicatorColor: const Color.fromARGB(255, 185, 223, 201),
           destinations: const [
@@ -102,6 +122,19 @@ class EcoTracerState extends State<EcoTracerPage> {
             })
           },
         ),
-        body: widget.child);
+        body: widget.child) :
+        ConnectingPage(getServerStatusCallback: () {
+          debugPrint("TEST");
+          connectingTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+            isConnected = await getServerStatus(IP_ADDRESS);
+            if(!isConnected && isStillConnected) {
+              isStillConnected = false;
+            }
+            if(isConnected && !isStillConnected) {
+              setState(() {});
+              isStillConnected = true;
+            }
+          });
+        });
   }
 }

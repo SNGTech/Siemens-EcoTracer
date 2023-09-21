@@ -9,26 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHasItemFinished = exports.updateBatchData = exports.getLatestBatchData = void 0;
+exports.batchStatus = exports.setBatchStarted = exports.hasBatchStarted = exports.getHasItemFinished = exports.updateBatchData = exports.getLatestBatchData = void 0;
 const resource_model_1 = require("./resource_model");
 const DrinkRecipes = require('../schemas/drink_recipe');
 const BatchData = require('../schemas/batch_data');
-var is_finished_item = false;
 const batchStatus = {
     ONGOING: 0,
     COMPLETED: 1
 };
-function updateBatchData(ingredient_names, flow_rates_payload, has_batch_started) {
+exports.batchStatus = batchStatus;
+var is_finished_item = false;
+var status = batchStatus.ONGOING;
+function updateBatchData(ingredient_names, flow_rates_payload) {
     return __awaiter(this, void 0, void 0, function* () {
         is_finished_item = true;
         let drink_name;
         let current_item_count;
         let max_item_count;
-        let status = batchStatus.ONGOING;
         let flow_rates = [];
         let consumption = [];
         let amounts_used = [];
-        if (has_batch_started) {
+        if (status == batchStatus.ONGOING) {
             // STARTING BATCH DATA TO BE SENT BY DB
             try {
                 let batch_data = yield BatchData.find();
@@ -106,6 +107,14 @@ function getLatestBatchData() {
     });
 }
 exports.getLatestBatchData = getLatestBatchData;
+function hasBatchStarted() {
+    return status == batchStatus.ONGOING;
+}
+exports.hasBatchStarted = hasBatchStarted;
+function setBatchStarted() {
+    status = batchStatus.ONGOING;
+}
+exports.setBatchStarted = setBatchStarted;
 function getHasItemFinished() {
     return is_finished_item;
 }

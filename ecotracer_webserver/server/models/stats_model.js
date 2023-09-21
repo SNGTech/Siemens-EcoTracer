@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateMachineStats = exports.getMachineStatsData = void 0;
+const batching_model_1 = require("./batching_model");
 const MachineStats = require('../schemas/machine_stats');
 const Status = {
     Downtime: 0,
@@ -29,12 +30,12 @@ function getMachineStatsData() {
     });
 }
 exports.getMachineStatsData = getMachineStatsData;
-function updateMachineStats(payload, _has_batch_started) {
+function updateMachineStats(payload) {
     try {
         let current = payload["currentRMS"];
         let voltage = payload["supplyVoltage"];
         let energy_rate = getPower(current, voltage);
-        let has_batch_started = _has_batch_started;
+        let has_batch_started = (0, batching_model_1.hasBatchStarted)();
         let status = getStatus(voltage, has_batch_started);
         let data = {
             current: current,

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { hasBatchStarted } from "./batching_model";
 
 const MachineStats = require('../schemas/machine_stats');
 
@@ -18,12 +19,12 @@ async function getMachineStatsData() {
     }
 }
 
-function updateMachineStats(payload, _has_batch_started: boolean) {
+function updateMachineStats(payload) {
     try {
         let current = payload["currentRMS"];
         let voltage = payload["supplyVoltage"];
         let energy_rate = getPower(current, voltage);
-        let has_batch_started = _has_batch_started;
+        let has_batch_started = hasBatchStarted();
         let status = getStatus(voltage, has_batch_started);
 
         let data = {

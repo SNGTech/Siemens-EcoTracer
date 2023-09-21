@@ -2,7 +2,7 @@ const FlowRates = require('../schemas/flow_rates');
 const DrinkRecipes = require('../schemas/drink_recipe');
 
 // WATER (INDEX 0) is taken from machine
-var def_flow_rates = [0.2, 1.4, 1.6];
+var def_flow_rates = [2.2, 1.4, 1.6];
 
 // RESET FLOW RATES
 function resetFlowRate(ingredient_names) {

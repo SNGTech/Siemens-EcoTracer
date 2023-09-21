@@ -6,13 +6,11 @@ import { add_test_recipes, getRecipes } from "./server/models/recipe_model";
 import express from 'express';
 import { resetModel, updateResources, getResourcesData, getIngredientNames, initBottleCount } from "./server/models/resource_model";
 import { resetFlowRate, getFlowRate, updateFlowRates } from "./server/models/flow_rate_model";
-import { getLatestBatchData, updateBatchData } from "./server/models/batching_model";
+import { getLatestBatchData, updateBatchData, hasBatchStarted, setBatchStarted } from "./server/models/batching_model";
 import { getCarbonDataHourly, updateCarbonData } from "./server/models/carbon_model";
 const BatchData = require('./server/schemas/batch_data');
 const app = express();
 const PORT = 5000;
-
-var has_batch_started = false;
 
 app.use(express.json());
 
@@ -39,6 +37,11 @@ app.get('/', (req, res) => {
 function randDouble(min: number, max: number, precision: number) {
     return parseFloat((min + (max - min) * Math.random()).toFixed(precision));
 }
+
+app.get('/ping', (req, res) => {
+    res.send(true);
+    console.log("PINGING SERVER");
+})
 
 // GET MACHINE STATS DATA
 app.get('/pub_stats', async (req, res) => {
@@ -67,10 +70,10 @@ app.get('/pub_carbon_data', async (req, res) => {
 });
 
 // POST START BATCHING SIGNAL
-app.post('/post_start_batching', async (req, res) => {
+app.post('/post_start_batch', (req, res) => {
 
-    let drink_name = 0;// GET RESPONSE DRINK NAME;
-    let max_item_count = 0; // GET RESPONSE MAX ITEM COUNT
+    let drink_name = req.body["drink_name"];// GET RESPONSE DRINK NAME;
+    let max_item_count = req.body["max_item_count"]; // GET RESPONSE MAX ITEM COUNT
 
     let consumption = [];
     for(let i = 0; i < getIngredientNames().length; i++) {
@@ -92,7 +95,7 @@ app.post('/post_start_batching', async (req, res) => {
     }]);
 
     console.log(`Started Batch: ` + drink_name);
-    has_batch_started = true;
+    setBatchStarted();
 });
 
 // UPDATE RESOURCES BASE ON FLOW RATE
@@ -100,12 +103,12 @@ app.post('/post_start_batching', async (req, res) => {
 setInterval(async() => {
     if(await getLatestBatchData() != null) {
         await updateFlowRates(getData(), getIngredientNames(), await getLatestBatchData());
-        await updateBatchData(getIngredientNames(), await getFlowRate(), has_batch_started);
+        await updateBatchData(getIngredientNames(), await getFlowRate());
         console.log(await getLatestBatchData());
     }
     await updateResources(await getFlowRate());
     if(getData() != "No Data")
-        updateMachineStats(getData(), has_batch_started); // ENABLE WHEN DATA IS COLLECTING
+        updateMachineStats(getData()); // ENABLE WHEN DATA IS COLLECTING
     //updateCarbonData(await getMachineStatsData());
     //console.log(data);
 }, 1000);
