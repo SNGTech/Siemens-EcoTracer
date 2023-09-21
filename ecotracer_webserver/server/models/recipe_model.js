@@ -20,11 +20,11 @@ const add_test_recipes = () => __awaiter(void 0, void 0, void 0, function* () {
                 ingredients: [
                     {
                         ingredient_name: "Water",
-                        amount: 0.25
+                        amount: 0.02
                     },
                     {
                         ingredient_name: "Tea",
-                        amount: 0.3
+                        amount: 0.1
                     },
                     {
                         ingredient_name: "Milk",

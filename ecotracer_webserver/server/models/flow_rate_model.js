@@ -72,11 +72,12 @@ function updateFlowRates(data_payload, ingredient_names, batch_payload) {
                 }
                 else {
                     // Use water flow rate data from machine, the rest is simulated
-                    // if(i == 0) {
-                    //     flow_rates.push(data_payload["liquidFlowRate"]);
-                    //     console.log(`Liquid: ${data_payload["liquidFlowRate"]}`);
-                    // } else
-                    flow_rates.push(def_flow_rates[i]);
+                    if (i == 0) {
+                        flow_rates.push(data_payload["liquidFlowRate"]);
+                        console.log(`Liquid: ${data_payload["liquidFlowRate"]}`);
+                    }
+                    else
+                        flow_rates.push(def_flow_rates[i]);
                 }
                 return {
                     name: name,

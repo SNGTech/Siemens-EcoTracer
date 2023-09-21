@@ -9,11 +9,11 @@ const add_test_recipes = async () => {
                 ingredients: [
                     {
                         ingredient_name: "Water",
-                        amount: 0.25
+                        amount: 0.02
                     },
                     {
                         ingredient_name: "Tea",
-                        amount: 0.3
+                        amount: 0.1
                     },
                     {
                         ingredient_name: "Milk",

@@ -2,7 +2,7 @@ const MachineResouces = require('../schemas/machine_resources');
 
 // IN FUTURE TO STORE AND QUERY IN A DEDICATED COLLECTION
 var ingredient_names = [ 'Water', 'Tea', 'Milk' ];
-var max_volumes = [3, 3, 3.4];
+var max_volumes = [0.5, 3, 3.4];
 var max_bottle_count = 40;
 var bottle_count = 0;
 
