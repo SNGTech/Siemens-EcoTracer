@@ -15,7 +15,7 @@ class CO2LineChart extends StatelessWidget {
         minX: 0,
         maxX: 23,
         minY: 0,
-        maxY: 6,
+        maxY: 40,
         borderData: FlBorderData(
             show: true,
             border: const Border(
@@ -33,14 +33,14 @@ class CO2LineChart extends StatelessWidget {
             spots: [
               // PUT INTO DATA CLASS
               FlSpot(0, 3),
-              FlSpot(2, 2),
-              FlSpot(4, 5),
-              FlSpot(6, 4),
-              FlSpot(8, 3.2),
-              FlSpot(10, 4),
-              FlSpot(12, 1.9),
-              FlSpot(14, 2.5),
-              FlSpot(16, 3),
+              FlSpot(2, 5),
+              FlSpot(4, 13),
+              FlSpot(6, 26),
+              FlSpot(8, 34),
+              FlSpot(10, 39),
+              FlSpot(12, 35),
+              FlSpot(14, 32),
+              FlSpot(16, 29.98),
             ],
             barWidth: 3,
             color: AppColor.darkTeal,

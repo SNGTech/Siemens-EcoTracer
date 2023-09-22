@@ -85,15 +85,15 @@ class _EcoTracerMachineInfoState extends State<EcoTracerMachineInfoWidget> {
                     children: [
                       ProgressChart(
                           title: "Availability",
-                          progress: 0.25,
+                          progress: 0.67,
                           fillColour: AppColor.statsRed),
                       ProgressChart(
                           title: "Performance",
-                          progress: 0.76,
+                          progress: 0.92,
                           fillColour: AppColor.statsBlue),
                       ProgressChart(
                           title: "Quality",
-                          progress: 0.39,
+                          progress: 0.89,
                           fillColour: AppColor.statsPurple)
                     ],
                   ),
@@ -230,7 +230,7 @@ class OEEScoreWidget extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 10),
               child: const InfoProgressBar(
                 title: "Total Score",
-                progress: 0.67,
+                progress: 0.55,
                 fillColour: Color(0xFFD6DEDB),
                 backgroundColour: Color(0xFF73A79E),
                 textColour: AppColor.offWhite,

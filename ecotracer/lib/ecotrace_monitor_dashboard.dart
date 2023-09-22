@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 
 class EcoTracerDashboardWidget extends StatelessWidget {
   // PLACEHOLDER TEST DATA
-  final timingDistribution = [75.0, 10.0, 15.0];
+  final timingDistribution = [40.0, 33.0, 27.0];
   final energyConsumptions = [
     [250.0, 100.0],
     [210.0, 200.0],
